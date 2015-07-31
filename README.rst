@@ -1,2 +1,2 @@
-tryton-encrypted-field
-======================
+trytond-encrypted-field
+=======================

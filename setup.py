@@ -8,16 +8,16 @@
 from setuptools import setup
 
 setup(
-    name='tryton_encrypted_field',
+    name='trytond_encrypted_field',
     version='3.4.0.1',
     description='Encrypted fields in tryton',
     long_description=open('README.rst').read(),
     author="Fulfil.IO Inc.",
     author_email="support@fulfil.io",
     url="https://www.fulfil.io",
-    package_dir={'tryton_encrypted_field': '.'},
+    package_dir={'trytond_encrypted_field': '.'},
     packages=[
-        'tryton_encrypted_field',
+        'trytond_encrypted_field',
     ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',

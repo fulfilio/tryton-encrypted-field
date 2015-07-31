@@ -11,7 +11,7 @@ import time
 import pytest
 from trytond.model import fields, ModelSQL
 from cryptography.fernet import Fernet
-from tryton_encrypted_field import EncryptedField
+from trytond_encrypted_field import EncryptedField
 
 
 class EncryptedCharField(ModelSQL):
