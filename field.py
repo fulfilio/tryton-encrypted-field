@@ -59,7 +59,7 @@ class EncryptedField(Function):
 
         key = os.environ.get('TRYTOND_ENCRYPTED_FIELD__SECRET_KEY') or \
             config.get('encrypted_field', 'secret_key')
-        return Fernet(key).encrypt(raw)
+        return Fernet(key).encrypt(raw.encode('utf-8'))
 
     @classmethod
     def _decrypt(cls, encrypted):
