@@ -19,7 +19,7 @@ class TestField:
         record.char = char
         record.save()
 
-        cursor = Transaction().cursor
+        cursor = Transaction().connection.cursor()
         sql_table = EncryptedCharField.__table__()
         cursor.execute(*sql_table.select(sql_table.id, sql_table.char))
         row, = cursor.fetchall()
@@ -41,7 +41,7 @@ class TestField:
         record.text = text
         record.save()
 
-        cursor = Transaction().cursor
+        cursor = Transaction().connection.cursor()
         sql_table = EncryptedTextField.__table__()
         cursor.execute(*sql_table.select(sql_table.id, sql_table.text))
         row, = cursor.fetchall()
@@ -58,7 +58,7 @@ class TestField:
         record.selection = selection
         record.save()
 
-        cursor = Transaction().cursor
+        cursor = Transaction().connection.cursor()
         sql_table = EncryptedSelectionField.__table__()
         cursor.execute(*sql_table.select(sql_table.id, sql_table.selection))
         row, = cursor.fetchall()
