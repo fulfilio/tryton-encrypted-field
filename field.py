@@ -76,7 +76,7 @@ class EncryptedField(Function):
     def set(self, model, name, ids, value, *args):
         assert args == (), "Not implemented yet"
 
-        cursor = Transaction().cursor
+        cursor = Transaction().connection.cursor()
         sql_table = model.__table__()
         column = getattr(sql_table, self.name)
 
@@ -89,7 +89,7 @@ class EncryptedField(Function):
             )
 
     def get(self, ids, Model, name, values=None):
-        cursor = Transaction().cursor
+        cursor = Transaction().connection.cursor()
         sql_table = Model.__table__()
 
         cursor.execute(
