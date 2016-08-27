@@ -10,6 +10,7 @@ import time
 
 import pytest
 from trytond.model import fields, ModelSQL
+from trytond.config import config
 from cryptography.fernet import Fernet
 from trytond_encrypted_field import EncryptedField
 
@@ -62,6 +63,7 @@ def install_module(request):
         os.environ['TRYTOND_DATABASE_URI'] = "postgresql://"
         os.environ['DB_NAME'] = 'test_' + str(int(time.time()))
 
+    config.set('database', 'uri', os.environ['TRYTOND_DATABASE_URI'])
     os.environ['TRYTOND_ENCRYPTED_FIELD__SECRET_KEY'] = Fernet.generate_key()
     from trytond.tests import test_tryton
     from trytond.pool import Pool
@@ -91,4 +93,4 @@ def transaction(request):
     with Transaction().start(DB_NAME, USER, context=CONTEXT) as transaction:
         yield transaction
 
-        transaction.cursor.rollback()
+        transaction.rollback()
