@@ -37,6 +37,7 @@ class EncryptedField(Function):
             raise RuntimeError('Encrypted field cannot be translated')
 
         super(EncryptedField, self).__init__(field, self.get, True, True)
+        self._sql_type = self._field._sql_type
 
     __init__.__doc__ += Field.__init__.__doc__
 
@@ -47,7 +48,7 @@ class EncryptedField(Function):
         return EncryptedField(copy.deepcopy(self._field))
 
     def sql_type(self):
-        return self._field.sql_type()
+        return self._sql_type
 
     @classmethod
     def _encrypt(cls, raw):
@@ -59,7 +60,7 @@ class EncryptedField(Function):
 
         key = os.environ.get('TRYTOND_ENCRYPTED_FIELD__SECRET_KEY') or \
             config.get('encrypted_field', 'secret_key')
-        return Fernet(key).encrypt(raw.encode('utf-8'))
+        return Fernet(key).encrypt(raw.encode('utf-8')).decode('utf-8')
 
     @classmethod
     def _decrypt(cls, encrypted):
@@ -71,7 +72,7 @@ class EncryptedField(Function):
 
         key = os.environ.get('TRYTOND_ENCRYPTED_FIELD__SECRET_KEY') or \
             config.get('encrypted_field', 'secret_key')
-        return Fernet(key).decrypt(encrypted.encode('utf-8'))
+        return Fernet(key).decrypt(encrypted.encode('utf-8')).decode('utf-8')
 
     def set(self, model, name, ids, value, *args):
         assert args == (), "Not implemented yet"
@@ -123,3 +124,13 @@ class EncryptedField(Function):
             'Encrypted fields can only be searched for existence of data only'
 
         return self._field.convert_domain(domain, tables, Model)
+
+    def __setattr__(self, name, value):
+        if name in (
+            '_field', '_type', 'getter', 'setter', 'searcher', 'name',
+            '_sql_type'
+        ):
+            object.__setattr__(self, name, value)
+            if name != 'name':
+                return
+        setattr(self._field, name, value)

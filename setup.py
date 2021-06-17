@@ -9,7 +9,7 @@ from setuptools import setup
 
 setup(
     name='trytond_encrypted_field',
-    version='4.0.0.1',
+    version='5.0.0.0',
     description='Encrypted fields in tryton',
     long_description=open('README.rst').read(),
     author="Fulfil.IO Inc.",
@@ -31,7 +31,7 @@ setup(
     ],
     license='BSD',
     install_requires=[
-        "trytond>=4.0,<4.1",
+        "trytond>=5.0,<5.1",
         "cryptography",
     ],
     zip_safe=False,

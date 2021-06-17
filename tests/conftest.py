@@ -6,7 +6,6 @@
     :license: see LICENSE for details.
 """
 import os
-import time
 
 import pytest
 from trytond.model import fields, ModelSQL
@@ -44,27 +43,16 @@ class EncryptedSelectionField(ModelSQL):
     )
 
 
-def pytest_addoption(parser):
-    parser.addoption(
-        "--db", action="store", default="sqlite",
-        help="Run on database: sqlite or postgres"
-    )
-
-
 @pytest.fixture(scope='session', autouse=True)
 def install_module(request):
     """Install tryton module in specified database.
     """
-    if request.config.getoption("--db") == 'sqlite':
-        os.environ['TRYTOND_DATABASE_URI'] = "sqlite://"
-        os.environ['DB_NAME'] = ':memory:'
-
-    elif request.config.getoption("--db") == 'postgres':
-        os.environ['TRYTOND_DATABASE_URI'] = "postgresql://"
-        os.environ['DB_NAME'] = 'test_' + str(int(time.time()))
-
+    os.environ['TRYTOND_DATABASE_URI'] = "postgresql://"
+    os.environ['DB_NAME'] = 'test_enc_field'
     config.set('database', 'uri', os.environ['TRYTOND_DATABASE_URI'])
-    os.environ['TRYTOND_ENCRYPTED_FIELD__SECRET_KEY'] = Fernet.generate_key()
+    os.environ['TRYTOND_ENCRYPTED_FIELD__SECRET_KEY'] = (
+        Fernet.generate_key().decode('utf-8')
+    )
     from trytond.tests import test_tryton
     from trytond.pool import Pool
 
@@ -74,7 +62,7 @@ def install_module(request):
         EncryptedSelectionField,
         module='tests', type_='model'
     )
-    test_tryton.install_module('tests')
+    test_tryton.activate_module('tests')
 
 
 @pytest.yield_fixture()
@@ -82,10 +70,10 @@ def transaction(request):
     """Yields transaction with installed module.
     """
     from trytond.transaction import Transaction
-    from trytond.tests.test_tryton import USER, CONTEXT, DB_NAME, POOL
+    from trytond.tests.test_tryton import USER, CONTEXT, DB_NAME, Pool
 
     # Inject helper functions in instance on which test function was collected.
-    request.instance.POOL = POOL
+    request.instance.POOL = Pool(DB_NAME)
     request.instance.USER = USER
     request.instance.CONTEXT = CONTEXT
     request.instance.DB_NAME = DB_NAME
